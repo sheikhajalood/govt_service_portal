@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Officer Dashboard</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            min-height: 100vh;
+            color: white;
+        }
+
+        /* Navbar */
+        .navbar {
+            background-color: #111;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+        }
+
+        .navbar h2 {
+            color: #00bfff;
+        }
+
+        .logout-btn {
+            background-color: #00bfff;
+            color: black;
+            padding: 8px 15px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .logout-btn:hover {
+            background-color: #009acd;
+        }
+
+        .container {
+            padding: 40px;
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        h3 {
+            margin-bottom: 20px;
+            color: #00bfff;
+        }
+
+        .card {
+            background-color: #111;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+        }
+
+        .card p {
+            margin-bottom: 8px;
+            color: #ccc;
+        }
+
+        .status {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 5px;
+        }
+
+        .pending {
+            background-color: orange;
+            color: black;
+        }
+
+        .approved {
+            background-color: green;
+        }
+
+        .rejected {
+            background-color: red;
+        }
+
+        .actions {
+            margin-top: 12px;
+        }
+
+        .approve-btn, .reject-btn {
+            padding: 6px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-right: 10px;
+            transition: 0.3s;
+        }
+
+        .approve-btn {
+            background-color: green;
+            color: white;
+        }
+
+        .approve-btn:hover {
+            background-color: darkgreen;
+        }
+
+        .reject-btn {
+            background-color: red;
+            color: white;
+        }
+
+        .reject-btn:hover {
+            background-color: darkred;
+        }
+
+        .no-data {
+            color: #ccc;
+        }
+
+        /* 🔥 Analytics Section */
+
+
+.analytics-card h4 {
+    margin-bottom: 10px;
+    color: #00bfff;
+}
+
+.analytics-card p {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.total p {
+    color: white;
+}
+
+.pending-card p {
+    color: orange;
+}
+
+.approved-card p {
+    color: green;
+}
+
+.rejected-card p {
+    color: red;
+}
+  /* 🔥 Top Dashboard Layout */
+.dashboard-top {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+    margin-bottom: 40px;
+}
+
+/* Analytics left side */
+.analytics-container {
+    flex: 2;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+/* Each analytics card */
+.analytics-card {
+    flex: 1 1 45%;
+    min-width: 180px;
+    background: #111;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+}
+
+.analytics-card h4 {
+    margin-bottom: 10px;
+    color: #00bfff;
+}
+
+.analytics-card p {
+    font-size: 26px;
+    font-weight: bold;
+}
+
+/* Chart right side */
+.chart-card {
+    flex: 1;
+    background: #111;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+    text-align: center;
+    max-width: 350px;
+}
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <div class="navbar">
+        <h2>Officer Dashboard</h2>
+        <a href="/logout" class="logout-btn">Logout</a>
+    </div>
+
+    <div class="container">
+
+        <!-- 🔥 Analytics Section -->
+       <!-- 🔥 Dashboard Top Section -->
+<div class="dashboard-top">
+
+    <!-- Analytics -->
+    <div class="analytics-container">
+
+        <div class="analytics-card total">
+            <h4>Total Applications</h4>
+            <p>{{ total }}</p>
+        </div>
+
+        <div class="analytics-card pending-card">
+            <h4>Pending</h4>
+            <p>{{ pending }}</p>
+        </div>
+
+        <div class="analytics-card approved-card">
+            <h4>Approved</h4>
+            <p>{{ approved }}</p>
+        </div>
+
+        <div class="analytics-card rejected-card">
+            <h4>Rejected</h4>
+            <p>{{ rejected }}</p>
+        </div>
+
+    </div>
+
+    <!-- Pie Chart -->
+    <div class="chart-card">
+        <h3>Application Distribution</h3>
+
+        {% if total > 0 %}
+            <canvas id="statusChart"></canvas>
+        {% else %}
+            <p style="color: #ccc;">No data available for visualization.</p>
+        {% endif %}
+    </div>
+
+</div>
+        <h3>Applications</h3>
+
+        {% if applications %}
+            {% for app in applications %}
+            <div class="card">
+    <p><b>User:</b> {{ app[1] }}</p>
+    <p><b>Service:</b> {{ app[2] }}</p>
+
+    <p><b>Applied Date:</b> {{ app[4] }}</p>
+    <p><b>Due Date:</b> {{ app[5] }}</p>
+
+    {% if app[3] == 'Pending' %}
+        <span class="status pending">Pending</span>
+    {% elif app[3] == 'Approved' %}
+        <span class="status approved">Approved</span>
+    {% elif app[3] == 'Rejected' %}
+        <span class="status rejected">Rejected</span>
+    {% else %}
+        <span class="status">{{ app[3] }}</span>
+    {% endif %}
+
+    {% if app[3] == 'Pending' %}
+        <div class="actions">
+            <a href="/approve/{{ app[0] }}" class="approve-btn">Approve</a>
+            <a href="/reject/{{ app[0] }}" class="reject-btn">Reject</a>
+        </div>
+    {% endif %}
+</div>
+
+            {% endfor %}
+        {% else %}
+            <p class="no-data">No applications available.</p>
+        {% endif %}
+
+    </div>
+{% if total > 0 %}
+<script>
+    const ctx = document.getElementById('statusChart');
+
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: ['Pending', 'Approved', 'Rejected'],
+            datasets: [{
+                data: [
+                    {{ pending }},
+                    {{ approved }},
+                    {{ rejected }}
+                ],
+                backgroundColor: [
+                    'orange',
+                    'green',
+                    'red'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: 'white'
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endif %}
+</body>
+</html>
