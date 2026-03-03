@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CivicEASE+ | Digital Governance Platform</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f6f9;
+            color: #1c1c1c;
+        }
+
+        /* Header */
+        header {
+            background-color: #0d1b2a;
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .logo span {
+            color: #3a86ff;
+        }
+
+        .nav-buttons a {
+            text-decoration: none;
+            margin-left: 15px;
+            padding: 8px 18px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .login-btn {
+            background-color: transparent;
+            border: 1px solid #3a86ff;
+            color: #3a86ff;
+        }
+
+        .register-btn {
+            background-color: #3a86ff;
+            color: white;
+        }
+
+        /* Hero Section */
+        .hero {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 60px 80px;
+            background: linear-gradient(to right, #0d1b2a, #1b263b);
+            color: white;
+        }
+
+        .hero-text {
+            max-width: 500px;
+        }
+
+        .hero-text h1 {
+            font-size: 38px;
+            margin-bottom: 15px;
+        }
+
+        .hero-text p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #dcdcdc;
+        }
+
+        .hero-buttons a {
+            margin-top: 20px;
+            display: inline-block;
+            padding: 10px 22px;
+            margin-right: 10px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .primary-btn {
+            background-color: #3a86ff;
+            color: white;
+        }
+
+        .secondary-btn {
+            background-color: transparent;
+            border: 1px solid white;
+            color: white;
+        }
+
+        .hero-graphic {
+            width: 320px;
+            height: 220px;
+            background-color: #3a86ff;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 60px;
+        }
+
+        /* Services Section */
+        .services {
+            padding: 60px 80px;
+            text-align: center;
+        }
+
+        .services h2 {
+            margin-bottom: 40px;
+            font-size: 28px;
+        }
+
+        .service-cards {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .card {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            width: 23%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h3 {
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            font-size: 14px;
+            color: #555;
+        }
+
+        /* Workflow */
+        .workflow {
+            background-color: #e9ecef;
+            padding: 60px 80px;
+            text-align: center;
+        }
+
+        .workflow h2 {
+            margin-bottom: 40px;
+        }
+
+        .steps {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .step {
+            width: 22%;
+        }
+
+        .step-circle {
+            width: 50px;
+            height: 50px;
+            background-color: #3a86ff;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 15px;
+            font-weight: bold;
+        }
+
+        footer {
+            background-color: #0d1b2a;
+            color: #bbb;
+            text-align: center;
+            padding: 20px;
+            font-size: 13px;
+        }
+
+        footer span {
+            color: #3a86ff;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">Civic<span>EASE+</span></div>
+   <div class="nav-buttons">
+    <a href="/login" class="login-btn">Login</a>
+</div>
+</header>
+
+<section class="hero">
+    <div class="hero-text">
+        <h1>Digital Governance Platform</h1>
+        <p>
+            CivicEASE+ enables citizens to apply, track and receive government
+            certificates digitally with secure authentication and transparent workflow.
+        </p>
+        <div class="hero-buttons">
+            <a href="/register" class="primary-btn">Create Account</a>
+
+        </div>
+    </div>
+
+    <div class="hero-graphic">
+        🏛️
+    </div>
+</section>
+
+<section class="services">
+    <h2>Our Core Services</h2>
+
+    <div class="service-cards">
+        <div class="card">
+            <h3>Apply for Certificate</h3>
+            <p>Submit digital applications for income and community certificates.</p>
+        </div>
+
+        <div class="card">
+            <h3>Track Application</h3>
+            <p>Monitor real-time status from submission to approval.</p>
+        </div>
+
+        <div class="card">
+            <h3>Officer Dashboard</h3>
+            <p>Verify, approve and manage citizen applications efficiently.</p>
+        </div>
+
+        <div class="card">
+            <h3>Analytics & Reports</h3>
+            <p>View system insights and certificate issuance statistics.</p>
+        </div>
+    </div>
+</section>
+
+<section class="workflow">
+    <h2>Application Workflow</h2>
+
+    <div class="steps">
+        <div class="step">
+            <div class="step-circle">1</div>
+            <p>Submit Application</p>
+        </div>
+
+        <div class="step">
+            <div class="step-circle">2</div>
+            <p>Under Officer Review</p>
+        </div>
+
+        <div class="step">
+            <div class="step-circle">3</div>
+            <p>Approved</p>
+        </div>
+
+        <div class="step">
+            <div class="step-circle">4</div>
+            <p>Certificate Generated</p>
+        </div>
+    </div>
+</section>
+
+<footer>
+    © 2026 Civic<span>EASE+</span> | Digital Governance Platform
+    <br>
+    Developed as an Academic Mini Project
+</footer>
+
+</body>
+</html>

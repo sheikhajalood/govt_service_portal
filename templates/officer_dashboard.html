@@ -266,6 +266,23 @@
 
     <p><b>Applied Date:</b> {{ app[4] }}</p>
     <p><b>Due Date:</b> {{ app[5] }}</p>
+               {% if app[6] is not none %}
+    {% if app[6] < 0 %}
+        <span style="color: red; font-weight: bold;">
+            Overdue ({{ app[6] }} days)
+        </span>
+
+    {% elif app[6] <= 2 %}
+        <span style="color: orange;">
+            Due Soon ({{ app[6] }} days left)
+        </span>
+
+    {% else %}
+        <span style="color: green;">
+            {{ app[6] }} days left
+        </span>
+    {% endif %}
+{% endif %}
 
     {% if app[3] == 'Pending' %}
         <span class="status pending">Pending</span>
@@ -279,6 +296,10 @@
 
     {% if app[3] == 'Pending' %}
         <div class="actions">
+            <a href="/review/{{ app[0] }}" class="btn btn-warning">
+    Start Review
+</a>
+            {% elif app[3] == "Under Review" %}
             <a href="/approve/{{ app[0] }}" class="approve-btn">Approve</a>
             <a href="/reject/{{ app[0] }}" class="reject-btn">Reject</a>
         </div>

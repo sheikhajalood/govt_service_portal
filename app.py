@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, session
 import sqlite3
-
+import random
+import string
 app = Flask(__name__)
 app.secret_key = "supersecretkey"
 from datetime import datetime, timedelta
@@ -99,9 +100,12 @@ def init_db():
 
 
 # ---------------- HOME ----------------
+
 @app.route('/')
 def home():
-    return "Government Service Delivery System Running"
+    return render_template('home.html')
+
+
 
 
 # ---------------- REGISTER ----------------
@@ -130,9 +134,21 @@ def register():
 # ---------------- LOGIN ----------------
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+
+    # Generate captcha when page loads
+    if request.method == 'GET':
+        captcha = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+        session['captcha'] = captcha
+        return render_template('login.html', captcha=captcha)
+
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
+        user_captcha = request.form['captcha']
+
+        # Check captcha first
+        if user_captcha != session.get('captcha'):
+            return "Invalid CAPTCHA"
 
         conn = sqlite3.connect('database.db')
         cursor = conn.cursor()
@@ -154,11 +170,29 @@ def login():
 
         else:
             return "Invalid Credentials"
-
     return render_template('login.html')
+# ---------------- FORGOT PASSWORD ----------------
+@app.route('/forgot_password', methods=['GET', 'POST'])
+def forgot_password():
 
+            if request.method == 'POST':
+                email = request.form['email']
+                new_password = request.form['new_password']
 
-# ---------------- CITIZEN DASHBOARD ----------------
+                conn = sqlite3.connect('database.db')
+                cursor = conn.cursor()
+                cursor.execute(
+                    "UPDATE users SET password=? WHERE email=?",
+                    (new_password, email)
+                )
+                conn.commit()
+                conn.close()
+
+                return redirect('/login')
+
+            return render_template('forgot_password.html')
+
+# ---------------- CITIZEN DASHBOARD ---------------#
 @app.route('/citizen_dashboard')
 def citizen_dashboard():
     if 'user_email' not in session:
@@ -245,20 +279,37 @@ def officer_dashboard():
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
 
-    # ✅ Correct Application Fetch (Your Original Working Query)
     cursor.execute('''
       SELECT applications.id,
-       applications.user_email,
-       services.service_name,
-       applications.status,
-       applications.applied_date,
-       applications.due_date
-        FROM applications
-        JOIN services ON applications.service_id = services.id
+             applications.user_email,
+             services.service_name,
+             applications.status,
+             applications.applied_date,
+             applications.due_date
+      FROM applications
+      JOIN services ON applications.service_id = services.id
     ''')
-    applications = cursor.fetchall()
 
-    # ✅ Analytics Queries
+    apps = cursor.fetchall()
+
+    today = datetime.now().date()
+    applications = []
+
+    for app in apps:
+        app_id, user_email, service_name, status, applied_date, due_date = app
+
+        if due_date:
+            due_date_obj = datetime.strptime(due_date, "%Y-%m-%d").date()
+            days_left = (due_date_obj - today).days
+        else:
+            days_left = None
+
+        applications.append(
+            (app_id, user_email, service_name, status,
+             applied_date, due_date, days_left)
+        )
+
+    # Analytics
     cursor.execute("SELECT COUNT(*) FROM applications")
     total = cursor.fetchone()[0]
 
@@ -270,7 +321,12 @@ def officer_dashboard():
 
     cursor.execute("SELECT COUNT(*) FROM applications WHERE status='Rejected'")
     rejected = cursor.fetchone()[0]
-
+    cursor.execute("""
+        SELECT COUNT(*) FROM applications
+        WHERE status IN ('Pending','Under Review')
+        AND due_date < date('now')
+        """)
+    overdue = cursor.fetchone()[0]
     conn.close()
 
     return render_template(
@@ -311,10 +367,16 @@ def apply(service_id):
         photo.save('static/uploads/' + photo_filename)
 
         applied_date = datetime.now().strftime("%Y-%m-%d")
-        due_date = (datetime.now() + timedelta(days=7)).strftime("%Y-%m-%d")
-
         conn = sqlite3.connect('database.db')
         cursor = conn.cursor()
+
+        cursor.execute("SELECT processing_days FROM services WHERE id=?", (service_id,))
+        service_data = cursor.fetchone()
+
+        processing_days = service_data[0]
+        due_date = (datetime.now() + timedelta(days=processing_days)).strftime("%Y-%m-%d")
+
+
 
         cursor.execute("""
         INSERT INTO applications (
@@ -394,6 +456,31 @@ def reject(app_id):
     cursor.execute(
         "INSERT INTO application_logs (application_id, action) VALUES (?, ?)",
         (app_id, "Application Rejected by Officer")
+    )
+
+    conn.commit()
+    conn.close()
+
+    return redirect('/officer_dashboard')
+# ---------------- START REVIEW ----------------
+@app.route('/review/<int:app_id>')
+def review(app_id):
+    if 'role' not in session or session['role'] != "officer":
+        return redirect('/login')
+
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+
+    # Update status
+    cursor.execute(
+        "UPDATE applications SET status='Under Review' WHERE id=?",
+        (app_id,)
+    )
+
+    # Insert timeline log
+    cursor.execute(
+        "INSERT INTO application_logs (application_id, action) VALUES (?, ?)",
+        (app_id, "Application Under Review by Officer")
     )
 
     conn.commit()

@@ -91,6 +91,7 @@
             text-decoration: underline;
         }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 
@@ -103,18 +104,82 @@
                 <input type="email" name="email" required>
             </div>
 
-            <div class="input-group">
-                <label>Password</label>
-                <input type="password" name="password" required>
+  <div class="input-group">
+
+           <div class="input-group">
+    <label>Password</label>
+    <div style="position:relative;">
+        <input type="password" id="password" name="password" required
+               style="padding-right:40px;">
+
+        <i class="fa-solid fa-eye-slash"
+           id="toggleIcon"
+           onclick="togglePassword()"
+           style="position:absolute; right:12px; top:50%;
+                  transform:translateY(-50%);
+                  cursor:pointer; color:#00bfff;">
+        </i>
+    </div>
+</div>
+               <div class="input-group">
+    <label>CAPTCHA</label>
+
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-top:5px;">
+
+        <!-- Captcha Display -->
+        <div id="captchaBox"
+             style="background:#222; padding:8px 15px;
+                    color:#00bfff; font-weight:bold;
+                    letter-spacing:3px; border-radius:6px;">
+            {{ captcha }}
+        </div>
+
+        <!-- Refresh Button -->
+        <button type="button"
+                onclick="refreshCaptcha()"
+                style="margin-left:10px; background:#00bfff;
+                       border:none; padding:6px 10px;
+                       border-radius:6px; cursor:pointer;">
+            ↻
+        </button>
+    </div>
+</div>
             </div>
+            <div class="input-group">
+    <input type="text" name="captcha" placeholder="Enter CAPTCHA" required>
+</div>
 
             <button type="submit" class="login-btn">Login</button>
+            <div style="margin-top:10px;">
+    <a href="/forgot_password" style="color:#00bfff; font-size:13px;">
+        Forgot Password?
+    </a>
+</div>
         </form>
 
         <div class="register-link">
             New user? <a href="/register">Register Here</a>
         </div>
     </div>
+<script>
+function togglePassword() {
+    var pass = document.getElementById("password");
+    var icon = document.getElementById("toggleIcon");
 
+    if (pass.type === "password") {
+        pass.type = "text";
+        icon.classList.remove("fa-eye-slash");
+        icon.classList.add("fa-eye");
+    } else {
+        pass.type = "password";
+        icon.classList.remove("fa-eye");
+        icon.classList.add("fa-eye-slash");
+    }
+}
+
+function refreshCaptcha() {
+    window.location.reload();
+}
+</script>
 </body>
 </html>
